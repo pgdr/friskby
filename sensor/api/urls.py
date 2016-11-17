@@ -13,6 +13,8 @@ urlpatterns = [
     url(r'^device_type/$' , DeviceTypeListView.as_view()),
     url(r'^device_type/(?P<pk>[0-9]+)/$' , DeviceTypeView.as_view()),
     #
+    url(r'^median/$' , Median.as_view()),
+    #
     url(r'^device/$' , DeviceListView.as_view()),
     url(r'^device/(?P<pk>%s)/$' % models.Device.IDPattern, DeviceView.as_view() , name = "device-config"),
     #

@@ -43,6 +43,29 @@ class DeviceTypeView(generics.RetrieveAPIView):
 
 #################################################################
 
+class Median(generics.GenericAPIView):
+    def __init__(self):
+        from django.utils import timezone
+        now = timezone.now()
+        self._from = now - datetime.timedelta(days=7)
+        self._to   = now
+
+    def get(self , request , *args, **kwargs):
+        s = Sensor.objects.all()
+        ret = {}
+        for sens in s:
+            ret[str(sens)] = self._clean_data(sens)
+        return Response(json.dumps(ret) , status = status.HTTP_200_OK )
+
+    def _clean_data(self, sensor):
+        data = sensor.get_rawdata()
+        m = []
+        c_date = None
+        for i,d,v in data:
+            if self._from <= d <= self._to:
+                m.append( v )
+        return sum(m)
+
 class DeviceListView(generics.ListCreateAPIView):
     queryset = models.Device.objects.all()
     serializer_class = DeviceSerializer
