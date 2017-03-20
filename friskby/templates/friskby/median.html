@@ -5,7 +5,9 @@
   <script src="{{ STATIC_URL }}js/include/highcharts.js"></script>
   <script src="{{ STATIC_URL }}js/include/exporting.js"></script>
   <script src="{{ STATIC_URL }}js/include/highcharts-more.js"></script>
+  <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
   <script src="{{ STATIC_URL }}js/median/chart.js"></script>
+  <script src="{{ STATIC_URL }}js/median/pmgauge.js">></script>
   <script type="text/javascript">
     window.onload = function() {
         Highcharts.setOptions({
@@ -14,10 +16,15 @@
             }
         });
 
-        var values = {{meandata|safe}};
-        var errors = {{stddata|safe}};
+        var vals = {{meandata|safe}};
+        var errs = {{stddata|safe}};
         var chart = createchart(); // from chart.js
-        chart.showDataFor(values, errors);
+        chart.showDataFor(vals, errs);
+        var value_pm25 = {{latest_pm25}};
+        var value_pm10 = {{latest_pm10}};
+        console.log(value_pm25);
+        console.log(value_pm10);
+        pmgauge(value_pm25, value_pm10);
     };
   </script>
 {% endblock %}
@@ -29,10 +36,17 @@
 {% block body %}
 <div class="row">
   <h1>{{start_time}}</h1>
-  <a href="?start=2017-03-14T00:00:00Z">03.14</a><br />
-  <a href="?start=2017-03-14T00:00:00Z&amp;end=2017-03-15T00:00:00Z">03.14&nbsp;&ndash;&nbsp;03.15</a><br />
-  <a href="?start=2017-03-01T00:00:00Z&amp;delta=1440">March daily</a><br />
+  <a href="?start=2017-03-14T00:00:00Z">03.14</a> &mdash;
+  <a href="?start=2017-03-14T00:00:00Z&amp;end=2017-03-15T00:00:00Z">03.14&nbsp;&ndash;&nbsp;03.15</a> &mdash;
+  <a href="?start=2017-03-01T00:00:00Z&amp;delta=1440">March daily</a> &mdash;
   <a href="?sensortype=PM25">PM 25</a>
+
+  <div style="width: 600px; height: 200px; margin: 0 auto">
+    <div id="container-PM25" style="width: 300px; height: 200px; float: left"></div>
+    <div id="container-PM10" style="width: 300px; height: 200px; float: left"></div>
+  </div>
+
+
   <div class="col-12 col-m-12">
     <div id="chart">
     </div>

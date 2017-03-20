@@ -117,16 +117,22 @@ class Median(View):
         mean_values.sort(key=lambda x:x['timestamp_data'])
         std_values.sort(key=lambda x:x['timestamp_data'])
 
+        latest_pm25 = mean_values[-1]['value']
+        latest_pm10 = latest_pm25 * 2 # TODO fix read correct value
+
         algo_end = TimeStamp.now()
         algo_delta = algo_end - algo_start
         print('total time used: %.2f sec' % algo_delta.total_seconds())
         json_string = json.dumps(device_rows)
+        print('25=%.2g\t10=%.2g' % (latest_pm25, latest_pm10))
 
         context = {"device_json": json_string,
                    "timezone_offset": TimeStamp.timezoneOffset(),
                    'start_time': start_time.strftime('Bergen air quality trend since %B %d.'),
                    'meandata': mean_values,
-                   'stddata': std_values
+                   'stddata': std_values,
+                   'latest_pm25': latest_pm25,
+                   'latest_pm10': latest_pm10
         }
 
         return render(request, "friskby/median.html", context)
